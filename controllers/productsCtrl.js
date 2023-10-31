@@ -44,9 +44,9 @@ exports.getAllproducts = async (req, res) => {
   try {
     console.log(req.query);
   //  const api=new apiFeatures(productModel.find({}),req.query);
-    const api=new apiFeatures(productModel.find(),req.query).search();
+    const api=new apiFeatures(productModel.find(),req.query).search().filter();
     // const result = await productModel.find({});
-    const result=await api.query
+    const result=await api.query;
     
     res.status(200).json({ success: true, result: result });
   } catch (err) {
