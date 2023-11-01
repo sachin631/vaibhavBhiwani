@@ -23,7 +23,7 @@ const registerUserSchema=new mongoose.Schema({
   },
   createdAt:{
     type:Date,
-    defualt:Date.now
+    default:Date.now
   }
 });
 const userModel=new mongoose.model("registerUserSchema",registerUserSchema); 
