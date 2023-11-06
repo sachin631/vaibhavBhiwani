@@ -7,9 +7,9 @@ const dbUrl = process.env.CONNECTION;
       useUnifiedTopology: true,
       useNewUrlParser: true,
     });
-    console.log("mongodb connected successfully message from connextion.js");
+    console.log("mongodb connected successfully, message from connection.js");
   } catch (error) {
-    console.log(`connection.js  ${error}`);
+    console.log(` connection.js  ${error} `);
   }
 })();
-mongoose.connect(dbUrl);
+// mongoose.connect(dbUrl);

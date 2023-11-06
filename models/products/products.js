@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+const userModel = require("../registerUser/registerUser");
 
 const schema = new mongoose.Schema({
   name: {
@@ -54,7 +55,7 @@ const schema = new mongoose.Schema({
       },
       message: {
         type: String,
-        required: [true, "please enetr the message"],
+        required: [true, "please enter the message"],
       },
     },
   ],
@@ -63,6 +64,11 @@ const schema = new mongoose.Schema({
   //   ref:"User",
   //   required:[true,"enter user id"]
   // },
+  user:{
+    type:mongoose.Schema.ObjectId,
+    ref:userModel,
+    required:[true,"please enter userId"]
+  },
   createdAt:{
     type:Date,
     default:Date.now

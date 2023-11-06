@@ -3,6 +3,9 @@ const apiFeatures = require("../utils/apiFeatures");
 
 //post product //admmin
 exports.postProducts = async (req, res) => {
+  let {user}=req.body;
+  user=req.user; //geting id of login user
+  console.log(user)
   try {
     const {
       name,
@@ -23,6 +26,7 @@ exports.postProducts = async (req, res) => {
       numOfReviews: numOfReviews,
       review: review,
       images: images,
+      user:user
     });
     const result = await response.save();
     res.status(200).json({
