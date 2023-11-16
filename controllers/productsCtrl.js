@@ -110,11 +110,10 @@ exports.updateProducts = async (req, res) => {
 };
 
 //delete the products api
-exports.deleteProduct = async (req, res) => {
+exports.deleteProduct = async (req, res) => { 
   try {
     const { _id } = req.params;
     const data = await productModel.findByIdAndDelete({ _id: _id });
-
     res.status(200).json({
       message: "product is deleted successfuly",
       success: true,

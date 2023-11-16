@@ -54,13 +54,16 @@ const registerUserSchema=new mongoose.Schema({
 });
 
 //hashed the passWord on event "save" 
-registerUserSchema.pre("save",async function(next){
-  if(! this.isModified("passWord")){
-    next();
+registerUserSchema.pre("save", async function (next) {
+  if (this.isModified("passWord")) {
+    this.passWord = await bcryptjs.hash(this.passWord, 10);
   }
-  this.passWord= await bcryptjs.hash(this.passWord,10);
-  this.rePassWord=await bcryptjs.hash(this.rePassWord,10);
+  if (this.isModified("rePassWord")) {
+    this.rePassWord = await bcryptjs.hash(this.rePassWord, 10);
+  }
+  next();
 });
+
 
 registerUserSchema.methods.getJwtToken= function(){
   const token =  jwt.sign({_id:this._id},process.env.SECRETKEY,{
