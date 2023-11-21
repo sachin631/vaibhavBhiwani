@@ -1,5 +1,5 @@
 const express=require("express");
-const { postProducts,getAllproducts,updateProducts,deleteProduct,getSingleProducts } = require("../controllers/productsCtrl");
+const { postProducts,getAllproducts,updateProducts,deleteProduct,getSingleProducts, reviewSystem } = require("../controllers/productsCtrl");
 const { loginAuth } = require("../middleware/auth");
 const { adminAuth } = require("../middleware/adminauth");
 const router=express.Router();
@@ -14,6 +14,8 @@ router.get("/getSingleProducts/:_id",getSingleProducts);
 router.put("/updateProducts/:_id",loginAuth,adminAuth,updateProducts);
 //delete the products api --admin
 router.delete("/deleteProduct/:_id",loginAuth,adminAuth,deleteProduct);
+//product review system
+router.put("/reviewSystem/:_id",loginAuth,reviewSystem);
 
 
 

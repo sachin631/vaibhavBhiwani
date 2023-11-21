@@ -15,6 +15,32 @@ const schema = new mongoose.Schema({
     type: Number,
     default: 0,
   },
+  noOfReviews: {
+    type: Number,
+    default: 0,
+  },
+  reviews: [
+    {
+      name: {
+        type: String,
+        required: [
+          true,
+          "User who provide review must have to enter there name ",
+        ],
+      },
+      user: {
+        type: mongoose.Schema.ObjectId,
+        ref: "registerUserSchema",
+      },
+      rating: {
+        type: Number,
+        default: 0,
+      },
+      Comment: {
+        type: String,
+      },
+    },
+  ],
 
   images: [
     {
@@ -39,44 +65,16 @@ const schema = new mongoose.Schema({
     maxLength: 5,
     default: 1,
   },
-  numOfReviews: {
-    type: Number,
-    default: 0,
+
+  user: {
+    type: mongoose.Schema.ObjectId,
+    ref: "registerUserSchema",
   },
-  review: [
-    {
-      name: {
-        type: String,
-        required: [true, "please enter name of person who gave ratings"],
-      },
-      rating: {
-        type: Number,
-        required: [true, "please gave rating"],
-      },
-      message: {
-        type: String,
-        required: [true, "please enter the message"],
-      },
-    },
-  ],
-  // user:{
-  //   type:mongoose.Schema.ObjectId,
-  //   ref:"User",
-  //   required:[true,"enter user id"]
-  // },
-  user:{
-    type:mongoose.Schema.ObjectId,
-    ref:userModel,
-    required:[true,"please enter userId"]
+  createdAt: {
+    type: Date,
+    default: Date.now,
   },
-  createdAt:{
-    type:Date,
-    default:Date.now
-  }
 });
 
 const ProductModel = new mongoose.model("products", schema);
-module.exports = ProductModel ;
-
-
-
+module.exports = ProductModel;

@@ -1,11 +1,12 @@
 const productModel = require("../models/products/products");
+const userModel = require("../models/registerUser/registerUser");
 const apiFeatures = require("../utils/apiFeatures");
 
 //post product //admmin
 exports.postProducts = async (req, res) => {
-  let {user}=req.body;
-  user=req.user; //geting id of login user
-  console.log(user)
+  // let {user}=req.body;
+  user = req.user; //geting id of login user
+  console.log(user);
   try {
     const {
       name,
@@ -16,6 +17,7 @@ exports.postProducts = async (req, res) => {
       numOfReviews,
       review,
       images,
+      reviews,
     } = req.body;
     const response = new productModel({
       name: name,
@@ -26,7 +28,8 @@ exports.postProducts = async (req, res) => {
       numOfReviews: numOfReviews,
       review: review,
       images: images,
-      user:user
+      user: user,
+      reviews: reviews,
     });
     const result = await response.save();
     res.status(200).json({
@@ -47,11 +50,13 @@ exports.postProducts = async (req, res) => {
 exports.getAllproducts = async (req, res) => {
   try {
     console.log(req.query);
-  //  const api=new apiFeatures(productModel.find({}),req.query);
-    const api=new apiFeatures(productModel.find(),req.query).search().filter();
+    //  const api=new apiFeatures(productModel.find({}),req.query);
+    const api = new apiFeatures(productModel.find(), req.query)
+      .search()
+      .filter();
     // const result = await productModel.find({});
-    const result=await api.query;
-    
+    const result = await api.query;
+
     res.status(200).json({ success: true, result: result });
   } catch (err) {
     res.status(401).json({
@@ -110,7 +115,7 @@ exports.updateProducts = async (req, res) => {
 };
 
 //delete the products api
-exports.deleteProduct = async (req, res) => { 
+exports.deleteProduct = async (req, res) => {
   try {
     const { _id } = req.params;
     const data = await productModel.findByIdAndDelete({ _id: _id });
@@ -123,7 +128,58 @@ exports.deleteProduct = async (req, res) => {
     res
       .status(400)
       .json({ message: "product not deleted", success: false, error: error });
-  } 
+  }
 };
 
-//
+//review and comment controller
+exports.reviewSystem = async (req, res) => {
+  try {
+    const userId = req.user;
+    const user = await userModel.findOne({ _id: userId });
+    const name = user.name;
+    const { rating, comment } = req.body;
+
+    // Find the product by ID
+    const findProduct = await productModel.findById(req.params);
+
+    // Check if the product exists
+    if (!findProduct) {
+      return res.status(404).json({ message: "Product not found" });
+    }
+
+    // Check if the user has already provided a review
+    const existingReviewIndex = findProduct.reviews.findIndex(
+      (review) => review.user.toString() === userId
+    );
+
+    // If the user has already provided a review, update it; otherwise, add a new review
+    if (existingReviewIndex !== -1) {
+      // Update the existing review
+      findProduct.reviews[existingReviewIndex].rating = rating;
+      findProduct.reviews[existingReviewIndex].Comment = comment;
+    } else {
+      // Add a new review
+      findProduct.reviews.push({
+        name: name,
+        user: userId,
+        rating: rating,
+        Comment: comment,
+      });
+    }
+
+    // Update the overall ratings and noOfReviews for the product
+    const totalRatings = findProduct.reviews.reduce (
+      (sum, review) => sum + review.rating,
+      0
+    ) ;
+    findProduct.ratings = totalRatings / findProduct.reviews.length;
+    findProduct.noOfReviews = findProduct.reviews.length;
+
+    // Save the updated product
+    await findProduct.save();
+
+    res.status(200).json({ message: "Review updated successfully" });
+  } catch (error) {
+    res.status(400).json({ success: false, error: error.message });
+  }
+};
